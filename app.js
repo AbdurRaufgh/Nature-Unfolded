@@ -13,39 +13,44 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// 2. THE OBJECT (Improved Fabric Material)
+// 2. MAIN OBJECT: MATTE BIOFOLD WRAP
 const geometry = new THREE.PlaneGeometry(4, 4, 64, 64);
 const material = new THREE.MeshStandardMaterial({ 
     color: 0xffcc33, 
     side: THREE.DoubleSide,
-    roughness: 0.85, // High roughness = Matte Cloth
-    metalness: 0.05, // Low metalness = Organic feel
-    flatShading: false
+    roughness: 0.85, 
+    metalness: 0.05
 });
 const wrap = new THREE.Mesh(geometry, material);
 scene.add(wrap);
 
-// 3. BACKGROUND PARTICLES (Deep Atmosphere)
+// 3. THE OLD-SCHOOL PARTICLES (Small, moving, background-filling)
 const particlesGeometry = new THREE.BufferGeometry();
-const count = 1500;
+const count = 2000; // High density like the version you liked
 const positions = new Float32Array(count * 3);
+
 for(let i = 0; i < count * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 25;
+    // Spread them in a large box around the scene
+    positions[i] = (Math.random() - 0.5) * 20; 
 }
+
 particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-const particlesMaterial = new THREE.PointsMaterial({ size: 0.012, color: 0xffcc33, transparent: true, opacity: 0.4 });
+const particlesMaterial = new THREE.PointsMaterial({ 
+    size: 0.02, // Small "dust" size
+    color: 0xffcc33, 
+    transparent: true, 
+    opacity: 0.5 
+});
 const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
 scene.add(particlesMesh);
 
-// 4. STUDIO LIGHTING (Soft & Professional)
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Bright room light
-scene.add(ambientLight);
-
+// 4. LIGHTING (Soft Studio)
+scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 const softLight = new THREE.DirectionalLight(0xffffff, 0.4);
 softLight.position.set(5, 5, 5);
 scene.add(softLight);
 
-// 5. INTERACTION LOGIC
+// 5. INTERACTION & BUTTON LOGIC
 let mouseX = 0, mouseY = 0;
 window.addEventListener('mousemove', (e) => {
     mouseX = (e.clientX / window.innerWidth) * 2 - 1;
@@ -55,15 +60,13 @@ window.addEventListener('mousemove', (e) => {
 let isBag = false;
 document.querySelector('.cta').addEventListener('click', () => {
     isBag = !isBag;
-    // Fast spin transition
     gsap.to(wrap.rotation, { y: wrap.rotation.y + Math.PI * 2, duration: 1.2, ease: "expo.out" });
-    
     if(isBag) {
-        gsap.to(wrap.material.color, { r: 0.55, g: 0.35, b: 0.2, duration: 1 }); // Brown Bag
+        gsap.to(wrap.material.color, { r: 0.55, g: 0.35, b: 0.2, duration: 1 });
         gsap.to(wrap.scale, { x: 0.75, y: 1.5, duration: 1 });
         document.querySelector('.cta').innerText = "Back to Wraps";
     } else {
-        gsap.to(wrap.material.color, { r: 1, g: 0.8, b: 0.2, duration: 1 }); // Gold Wrap
+        gsap.to(wrap.material.color, { r: 1, g: 0.8, b: 0.2, duration: 1 });
         gsap.to(wrap.scale, { x: 1, y: 1, duration: 1 });
         document.querySelector('.cta').innerText = "Explore Materials";
     }
@@ -79,17 +82,16 @@ function animate() {
     for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
         const y = pos.getY(i);
-        // Combining two waves for a natural fabric "wiggle"
         const wave = Math.sin(x + time) * 0.15 + Math.cos(y + time * 0.5) * 0.1;
         pos.setZ(i, wave);
     }
     pos.needsUpdate = true;
 
-    // Smooth Interactive Motion
+    // Mouse Follow
     wrap.rotation.y += (mouseX * 0.3 - wrap.rotation.y) * 0.05;
     wrap.rotation.x += (-mouseY * 0.3 - wrap.rotation.x) * 0.05;
 
-    // Scroll Reaction
+    // Scroll Logic
     const scrollY = window.scrollY;
     gsap.to(wrap.position, {
         z: Math.min(scrollY * 0.004, 2.2),
@@ -97,7 +99,10 @@ function animate() {
         overwrite: true
     });
 
-    particlesMesh.rotation.y += 0.0005;
+    // Particle Drift (This makes the background feel "alive")
+    particlesMesh.rotation.y += 0.001;
+    particlesMesh.rotation.x += 0.0005;
+
     renderer.render(scene, camera);
 }
 
