@@ -36,9 +36,28 @@ body {
 nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; padding: 1.5rem 5%; z-index: 100; }
 
 .hero { height: 100vh; display: flex; align-items: center; padding-left: 8%; }
-h1 { font-size: clamp(3rem, 10vw, 7rem); line-height: 0.9; text-transform: uppercase; font-weight: 900; }
-.outline { -webkit-text-stroke: 1px #f0f0f0; color: transparent; }
+h1 {
+    font-size: clamp(3rem, 10vw, 7rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    font-weight: 900;
+    /* MAGIC PART: This makes text react to the 3D object color */
+    mix-blend-mode: difference; 
+    position: relative;
+    z-index: 10;
+}
 
+.outline {
+    -webkit-text-stroke: 1px #f0f0f0;
+    color: transparent;
+    transition: all 0.5s ease;
+}
+
+/* When the user scrolls, let's make the outline "fill up" */
+.hero:hover .outline {
+    color: #f0f0f0;
+    -webkit-text-stroke: 0px;
+}
 .cta { 
     margin-top: 2rem; padding: 18px 45px; background: transparent; 
     color: white; border: 1px solid rgba(255,255,255,0.3); 

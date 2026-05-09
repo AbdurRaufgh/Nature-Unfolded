@@ -95,27 +95,55 @@ document.querySelector('.cta').addEventListener('click', () => {
 });
 
 // 6. ANIMATION LOOP
+// Add these variables at the top of your JS
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
 function animate() {
     requestAnimationFrame(animate);
     const time = Date.now() * 0.002;
 
-    // Organic Cloth Ripple
+    // 1. UPDATE RAYCASTER
+    mouse.x = mouseX;
+    mouse.y = mouseY;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(wrap);
+
+    // 2. THE DYNAMIC RIPPLE
     const pos = wrap.geometry.attributes.position;
     for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
         const y = pos.getY(i);
-        const wave = Math.sin(x + time) * 0.15 + Math.cos(y + time * 0.5) * 0.1;
+        
+        // Base Wave
+        let wave = Math.sin(x + time) * 0.15 + Math.cos(y + time * 0.5) * 0.1;
+
+        // ULTRA FEATURE: Mouse Distortion
+        if (intersects.length > 0) {
+            const dist = new THREE.Vector3(x, y, 0).distanceTo(intersects[0].point);
+            if (dist < 1.5) {
+                // This creates a "poke" effect where the mouse is
+                wave += (1.5 - dist) * 0.5; 
+            }
+        }
+        
         pos.setZ(i, wave);
     }
     pos.needsUpdate = true;
 
-    // Mouse Follow
+    // 3. ELASTIC ROTATION
     wrap.rotation.y += (mouseX * 0.3 - wrap.rotation.y) * 0.05;
     wrap.rotation.x += (-mouseY * 0.3 - wrap.rotation.x) * 0.05;
 
-    // Scroll Logic
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
+    // 4. PARALLAX LAYERS
+    particlesMesh.rotation.y += 0.001;
+    if(typeof glassGroup !== 'undefined') {
+        glassGroup.position.y = window.scrollY * 0.005;
+        glassGroup.children.forEach(b => b.rotation.x += 0.01);
+    }
+
+    renderer.render(scene, camera);
+}
 
     // 1. Wrap moves standardly
     gsap.to(wrap.position, {
