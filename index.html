@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioFold | Sustainable Materials</title>
+    <title>BioFold | Organic Packaging</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <canvas id="scene-container"></canvas>
-    <div class="noise-overlay"></div> <!-- Fixed grain overlay -->
+    <div class="noise-overlay"></div>
+    <div class="texture-grain"></div> <!-- New: Adds fabric-like feel -->
 
     <main>
         <nav>
@@ -17,15 +18,17 @@
         </nav>
 
         <section class="hero">
-            <h1>Nature, <br><span class="outline">Unfolded.</span></h1>
-            <p>Premium beeswax wraps & organic packaging solutions.</p>
-            <button class="cta">Explore Materials</button>
+            <div class="hero-content">
+                <h1>Nature, <br><span class="outline">Unfolded.</span></h1>
+                <p>Premium beeswax wraps & organic packaging solutions.</p>
+                <button class="cta">Explore Materials</button>
+            </div>
         </section>
 
         <section class="details">
             <div class="content-box">
                 <h2>Zero Waste.</h2>
-                <p>Our BioFold wraps use 100% organic cotton infused with sustainably harvested beeswax.</p>
+                <p>Our BioFold wraps use 100% organic cotton infused with sustainably harvested beeswax, jojoba oil, and tree resin.</p>
             </div>
         </section>
 
@@ -39,7 +42,6 @@
         </footer>
     </main>
 
-    <!-- CRITICAL: Load libraries before app.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="app.js"></script>

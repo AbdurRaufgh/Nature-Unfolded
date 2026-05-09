@@ -2,40 +2,63 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { background: #0d0d0d; color: #f0f0f0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-
-#scene-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-/* Fixed Grain Overlay */
-.noise-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.05; z-index: 999;
-    background: url('data:image/svg+xml,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+body { 
+    background: #0a0a0a; 
+    color: #f0f0f0; 
+    font-family: 'Inter', sans-serif; 
+    overflow-x: hidden; 
 }
 
-nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; padding: 1.5rem 5%; z-index: 100; backdrop-filter: blur(10px); }
+#scene-container { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: -1; 
+    filter: saturate(90%) brightness(95%); /* Softens the 3D look */
+}
 
-.hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-left: 5%; }
+/* Atmospheric Grain */
+.noise-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    pointer-events: none; opacity: 0.04; z-index: 999;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+}
 
-h1 { font-size: clamp(3rem, 10vw, 8rem); line-height: 0.9; text-transform: uppercase; }
+/* Fabric Texture Overlay */
+.texture-grain {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 998; opacity: 0.15;
+    background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+}
 
+nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; padding: 1.5rem 5%; z-index: 100; }
+
+.hero { height: 100vh; display: flex; align-items: center; padding-left: 8%; }
+h1 { font-size: clamp(3rem, 10vw, 7rem); line-height: 0.9; text-transform: uppercase; font-weight: 900; }
 .outline { -webkit-text-stroke: 1px #f0f0f0; color: transparent; }
 
-.cta { margin-top: 2rem; padding: 15px 40px; background: transparent; color: white; border: 1px solid white; cursor: pointer; transition: 0.4s; z-index: 100; position: relative; }
-
-.cta:hover { background: white; color: black; }
+.cta { 
+    margin-top: 2rem; padding: 18px 45px; background: transparent; 
+    color: white; border: 1px solid rgba(255,255,255,0.3); 
+    cursor: pointer; transition: 0.4s; font-weight: bold; letter-spacing: 1px;
+}
+.cta:hover { background: white; color: black; border-color: white; }
 
 .details { height: 100vh; display: flex; align-items: center; justify-content: flex-end; padding-right: 10%; }
+.content-box { 
+    max-width: 450px; background: rgba(255, 255, 255, 0.03); 
+    padding: 50px; backdrop-filter: blur(15px); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+}
 
-.content-box { max-width: 500px; background: rgba(255, 255, 255, 0.05); padding: 40px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+footer { padding: 40px 5%; background: #0a0a0a; color: #444; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
+.footer-line { width: 100%; height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 20px; }
+.footer-content { display: flex; justify-content: space-between; }
 
-footer { padding: 50px 5%; background: #0d0d0d; }
-
-.footer-line { width: 100%; height: 1px; background: rgba(255, 255, 255, 0.1); margin-bottom: 20px; }
-
-.footer-content { display: flex; justify-content: space-between; font-size: 0.8rem; color: #555; }
-
-/* Mobile Logic */
 @media (max-width: 768px) {
     h1 { font-size: 3.5rem; }
+    .hero { padding-left: 5%; }
     .details { justify-content: center; padding-right: 0; }
 }
