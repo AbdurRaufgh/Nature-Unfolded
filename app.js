@@ -12,6 +12,28 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// Create a Foreground Group for fast-moving items
+const fgGroup = new THREE.Group();
+scene.add(fgGroup);
+
+// Add a few "Floating Petals" or "Organic Shapes"
+const petalGeo = new THREE.TorusKnotGeometry(0.5, 0.1, 64, 8); // Just a placeholder organic shape
+const petalMat = new THREE.MeshStandardMaterial({ 
+    color: 0x22ff88, 
+    transparent: true, 
+    opacity: 0.2, 
+    roughness: 1 
+});
+
+for(let i = 0; i < 5; i++) {
+    const petal = new THREE.Mesh(petalGeo, petalMat);
+    petal.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 15,
+        3 // Positioned CLOSE to the camera (Z=3)
+    );
+    fgGroup.add(petal);
+}
 
 // 2. MAIN OBJECT: MATTE BIOFOLD WRAP
 const geometry = new THREE.PlaneGeometry(4, 4, 64, 64);
@@ -92,13 +114,28 @@ function animate() {
     wrap.rotation.x += (-mouseY * 0.3 - wrap.rotation.x) * 0.05;
 
     // Scroll Logic
+window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
+
+    // 1. Wrap moves standardly
     gsap.to(wrap.position, {
         z: Math.min(scrollY * 0.004, 2.2),
         x: -(scrollY * 0.0015),
-        overwrite: true
+        duration: 0.5
     });
 
+    // 2. Particles (Background) move SLOWLY upward
+    gsap.to(particlesMesh.position, {
+        y: scrollY * 0.0005,
+        duration: 0.8
+    });
+
+    // 3. Foreground Shapes move FAST (The Parallax Pop)
+    gsap.to(fgGroup.position, {
+        y: scrollY * 0.005, // High multiplier = faster motion
+        duration: 0.4
+    });
+});
     // Particle Drift (This makes the background feel "alive")
     particlesMesh.rotation.y += 0.001;
     particlesMesh.rotation.x += 0.0005;
